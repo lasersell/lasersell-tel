@@ -5,13 +5,19 @@ pub use layer::{BetterStackLayer, BetterStackLayerBuilder};
 
 use std::time::Duration;
 
-/// Build a [`BetterStackLayer`] from an environment variable.
+/// Build a [`BetterStackLayer`] from environment variables.
 ///
-/// Returns `None` if the env var is unset or empty, allowing callers to
+/// Returns `None` if the token env var is unset or empty, allowing callers to
 /// conditionally wire the layer only when a token is available.
-pub fn layer_from_env(env_var: &str) -> Option<BetterStackLayer> {
-    let token = std::env::var(env_var).ok().filter(|v| !v.is_empty())?;
-    Some(BetterStackLayerBuilder::new(token).build())
+///
+/// If `BETTERSTACK_ENDPOINT` is set, it overrides the default ingestion URL.
+pub fn layer_from_env(token_env_var: &str) -> Option<BetterStackLayer> {
+    let token = std::env::var(token_env_var).ok().filter(|v| !v.is_empty())?;
+    let mut builder = BetterStackLayerBuilder::new(token);
+    if let Some(endpoint) = std::env::var("BETTERSTACK_ENDPOINT").ok().filter(|v| !v.is_empty()) {
+        builder = builder.endpoint(endpoint);
+    }
+    Some(builder.build())
 }
 
 /// Default Better Stack ingestion endpoint.

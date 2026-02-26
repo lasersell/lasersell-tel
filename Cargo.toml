@@ -1,6 +1,6 @@
 [package]
 name = "lasersell-tel"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 license = "MIT"
 description = "Non-blocking tracing layer that ships structured JSON logs to Better Stack"
